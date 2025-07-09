@@ -1,4 +1,5 @@
 import React from "react";
+import { Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -14,6 +15,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return(
+    <PaperProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
       <Stack.Screen name="Home" component={HomeScreen} options={{title:'Obras'}}></Stack.Screen>
@@ -23,8 +25,8 @@ export default function App() {
       <Stack.Screen name="EditarObra" component={EditarObra} options={{title: 'Editar Obra'}}></Stack.Screen>
       <Stack.Screen name="DetalhesFiscalizacao" component={DetalhesFiscalizacao} options={{title:'Detalhes Fiscalização'}}></Stack.Screen>
       <Stack.Screen name="EditarFiscalizacao" component={EditarFiscalizacao} options={{title: 'Editar Fiscalização'}}></Stack.Screen>
-      
       </Stack.Navigator>
     </NavigationContainer>
+    </PaperProvider>
   );
 }

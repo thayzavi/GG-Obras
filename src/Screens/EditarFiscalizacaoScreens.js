@@ -3,19 +3,27 @@ import { View, Text, TextInput,StyleSheet, Image, ScrollView, Alert } from 'reac
 import * as ImagePicker from 'expo-image-picker';
 import { Button, Card} from 'react-native-paper';
 import MapView, { Marker } from 'react-native-maps';
-import { Picker } from '@react-native-picker/picker';
+import RNPickerSelect from 'react-native-picker-select';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { api } from '../Services/api';
 
-export default function EdiarFiscalizacao({ navigation, route}) {
+export default function EditarFiscalizacao({ navigation , route}) {
     const { fiscalizacao } = route.params;
 
     const [status, setStatus] = useState('');
+    const [showDropDown, setShowDropDown] = useState(false);
     const [data, setData] = useState('');
     const [observacoes, setObservacoes] = useState('');
     const [foto, setFoto] = useState(null);
     const [localizacao, setLocalizacao] = useState(null);
     const [endereco, setendereco] = useState('');
+
+    const statusList = [
+    { label: 'Pendente', value: 'pendente' },
+    { label: 'Em andamento', value: 'em-andamento' },
+    { label: 'Concluído', value: 'concluido' },
+    { label: 'Atrasado', value: 'atrasado' },
+  ];
     
 
     useEffect(() => {
@@ -121,37 +129,19 @@ const tirarFoto = async () => {
   return (
 
     <ScrollView contentContainerStyle={styles.container}>
-         <View style={styles.buttonGroup}>
-    <Button
-        mode="contained"
-        icon="camera"
-        onPress={tirarFoto}
-        style={styles.btn}>
-        Tirar Foto
-    </Button>
-        
-    <Button
-        mode="contained"
-        icon="image"
-        onPress={selecionarFoto}
-        style={styles.btn}>
-            Galeria
-    </Button>
-</View>
 
+     <Text>Status:</Text>
+        <RNPickerSelect
+        onValueChange={(value) => setStatus(value)}
+        value={status}
+        placeholder={{ label: 'Selecione o status', value: '' }}
+        items={statusList}
+        style={{
+          inputIOS: styles.picker,
+          inputAndroid: styles.picker,
+        }}
+    />
 
-    <Text>Status:</Text>
-      <View style={styles.input}>
-        <Picker
-          selectedValue={status}
-          onValueChange={(itemValue) => setStatus(itemValue)}
-        >
-          <Picker.Item label="Pendente" value="pendente" />
-          <Picker.Item label="Em andamento" value="em-andamento" />
-          <Picker.Item label="Concluído" value="concluido" />
-          <Picker.Item label="Atrasado" value="atrasado" />
-        </Picker>
-      </View>
 
         <Text>Data:</Text>
         <TextInput style={styles.input} value={data} onChangeText={setData} placeholder="DD/MM/AAAA"></TextInput>
@@ -160,10 +150,28 @@ const tirarFoto = async () => {
         <TextInput style={styles.input} value={observacoes} onChangeText={setObservacoes}></TextInput>
 
          <Text>Foto da obra:</Text>
+          <View style={styles.buttonGroup}>
+                <Button
+                    mode="contained"
+                    icon="camera"
+                    onPress={tirarFoto}
+                    style={styles.fotoButton}>
+                    Tirar Foto
+                </Button>
+                    
+                <Button
+                    mode="contained"
+                    icon="image"
+                    onPress={selecionarFoto}
+                    style={styles.fotoButton}>
+                        Galeria
+                </Button>
+          </View>
+
             {foto && (
                 <Card style={styles.card}>
                     <Card.Cover source={{ uri: foto }} style={styles.foto} />
-                </Card>
+            </Card>
         )}
         
 
@@ -206,7 +214,7 @@ const tirarFoto = async () => {
             mode="contained"
             icon="content-save"
             onPress={salvarAlteracoes}
-            style={{ marginTop: 20 }}
+            style={styles.btn }
         >
             Salvar Alterações
   </Button>
@@ -217,37 +225,66 @@ const tirarFoto = async () => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-    },
-    input:{
-        borderWidth: 1,
-        borderColor: '#aaa',
-        padding: 8,
-        marginVertical: 8,
-        borderRadius: 4,
-        backgroundColor: '#fff',
-    },
-    map:{
-        height: 200,
-        width: '100%',
-        marginVertical: 10,
-        borderRadius: 10,
-    },
-    foto: {
-        width: 360,
-        height:250,
-        marginTop: 10,
-        alignSelf: 'center',
-        borderRadius: 6,
-    },
+  container: {
+    padding: 20,
+    backgroundColor: '#F4F6F6',
+},
+  input: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 8,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  map:{
+    height: 200,
+    width: '100%',
+    marginVertical: 10,
+    borderRadius: 10,
+  },
+  foto: {
+  width: '100%',
+  height: 250,
+  marginTop: 20,
+  borderRadius: 10,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  },
     buttonGroup: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginVertical: 15,
-    },
-     card:{
-        marginBottom: 30,
-        backgroundColor: 'transparent',
-    },
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+    marginBottom: 8,
+   },
+  card:{
+    marginBottom: 30,
+    backgroundColor: 'transparent',
+  },
+  fotoButton: {
+    flex: 1,
+    marginHorizontal: 5,
+    backgroundColor: '#A34003',
+    borderWidth: 1,
+  },
+  picker: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#aaa',
+    borderRadius: 4,
+    backgroundColor: 'white',
+    color: 'black',
+    marginVertical: 8,
+  },
+  btn:{
+    marginBottom: 65,
+    backgroundColor: '#008000',
+    marginInlineStart: 'auto'
+  },
+
 });

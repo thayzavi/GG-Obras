@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 import { Button} from 'react-native-paper';
+import Assistente from '../Componentes/Assistente';
 import {api} from '../Services/api';
 
 import ObraItem from '../Componentes/ObraItem'
@@ -53,6 +54,7 @@ export default function HomeScreen({navigation}) {
                 )}
             />
             )}
+             <Assistente/>
         </View>
     )
 
@@ -60,13 +62,16 @@ export default function HomeScreen({navigation}) {
 const styles = StyleSheet.create({
     container:{
         flex: 1,
-        padding: 10
+        padding: 10,
+        backgroundColor: '#F4F6F6',
     },
     btn:{
     marginHorizontal: 5,
     marginBottom: 18,
     marginTop:10,
-    width:'40%',
-    marginLeft: '60%'
+    width:'35%',
+    marginLeft: '61%',
+    backgroundColor: '#A34003',
+    borderRadius: 8,
   }
 })

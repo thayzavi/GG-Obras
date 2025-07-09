@@ -47,7 +47,7 @@ export default function DetalhesFiscalizacao(){
         icon="pencil"
         mode="contained"
         onPress={() => navigation.navigate('EditarFiscalizacao', { fiscalizacao })}
-        style={styles.btn}
+        style={styles.btnE}
         >
           Editar
         </Button>
@@ -56,7 +56,7 @@ export default function DetalhesFiscalizacao(){
     {fiscalizacao.foto && (
     <Image source={{ uri: fiscalizacao.foto}} style={styles.img}></Image>
     )}
-    <Card style={styles.Card}>
+    <Card style={styles.card}>
         <Card.Content>
             <Text style={styles.title}>Status: {fiscalizacao.status}</Text>
             <Text> 📅 Data: {formatDate(fiscalizacao.data)}</Text>
@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     container :{
         padding: 15,
         flex: 1,
+        backgroundColor: '#F4F6F6',
     },
     img:{
         width: '100%',
@@ -136,10 +137,20 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 5,
     },
+    card:{
+        backgroundColor: '#fff'
+    },
     btn: {
         marginTop: 15,
         marginBottom: 10,
         width:'40%',
-        marginLeft: '60%'
+        marginLeft: '60%',
+    },
+    btnE:{
+        backgroundColor: '#A34003',
+        marginTop: 15,
+        marginBottom: 10,
+        width:'40%',
+        marginLeft: '60%',
     },
 });

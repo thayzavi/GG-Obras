@@ -4,7 +4,7 @@ import { Button, Card } from 'react-native-paper';
 import * as Location from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
 import * as ImagePicker from 'expo-image-picker';
-import { Picker } from '@react-native-picker/picker';
+import RNPickerSelect from 'react-native-picker-select';
 import { api } from '../Services/api';
 
 export default function Fiscalizacao({ navigation, route }) {
@@ -15,6 +15,14 @@ export default function Fiscalizacao({ navigation, route }) {
     const [nomeLocal, setNomeLocal] = useState('');
     const [foto, setFoto] = useState(null);
     const { obraId } = route.params;
+
+    
+    const statusList = [
+        { label: 'Pendente', value: 'pendente' },
+        { label: 'Em andamento', value: 'em-andamento' },
+        { label: 'Concluído', value: 'concluido' },
+        { label: 'Atrasado', value: 'atrasado' },
+    ];
 
     useEffect(() => {
         (async () => {
@@ -118,25 +126,6 @@ export default function Fiscalizacao({ navigation, route }) {
     return (
         <ScrollView contentContainerStyle={styles.container}>
 
-        <View style={styles.buttonGroup}>
-            <Button
-                mode="contained"
-                icon="camera"
-                onPress={tirarFoto}
-                style={styles.btn}>
-                    Tirar Foto
-            </Button>
-            
-                <Button
-                    mode="contained"
-                    icon="image"
-                    onPress={selecionarFoto}
-                    style={styles.btn}>
-                    Galeria
-                </Button>
-            
-        </View>
-
 
             <Text>Data da Fiscalização</Text>
             <TextInput 
@@ -146,18 +135,18 @@ export default function Fiscalizacao({ navigation, route }) {
                 placeholder="DD/MM/AAAA"
             />
 
-           <Text>Status</Text>
-            <Picker
-                selectedValue={status}
-                onValueChange={(itemValue) => setStatus(itemValue)}
-                style={styles.picker}
-            >
-                <Picker.Item label="Selecione o status" value="" />
-                <Picker.Item label="Pendente" value="pendente" />
-                <Picker.Item label="Em andamento" value="em-andamento" />
-                <Picker.Item label="Concluído" value="concluido" />
-                <Picker.Item label="Atrasado" value="atrasado" />
-            </Picker>
+            <Text>Status</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setStatus(value)}
+                value={status}
+                placeholder={{ label: 'Selecione um status', value: '' }}
+                items={statusList}
+                style={{
+                    inputIOS: styles.picker,
+                    inputAndroid: styles.picker
+                }}
+            />
+            
             <Text>Observações</Text>
             <TextInput 
                 style={[styles.input, { height: 100 }]} 
@@ -167,11 +156,35 @@ export default function Fiscalizacao({ navigation, route }) {
                 placeholder="Descreva as observações da fiscalização"
             />
 
+
             <Text>Foto da fiscalização:</Text>
-                {foto && (
+            <View style={styles.buttonGroup}>
+
+            <Button
+                mode="outlined"
+                icon="camera"
+                onPress={tirarFoto}
+                style={styles.fotoButton}>
+                    Tirar Foto
+            </Button>
+            
+                <Button
+                    mode="outlined"
+                    icon="image"
+                    onPress={selecionarFoto}
+                    style={styles.fotoButton}>
+                        Selecionar da Galeria
+                </Button>
+            
+        </View>
+                {foto ? (
                     <Card style={styles.card}>
                         <Card.Cover source={{ uri: foto }} style={styles.foto} />
                     </Card>
+                ) : (
+                    <View style={styles.fotoPlaceholder}>
+                        <Text style={styles.placeholderText}>Nenhuma foto selecionada</Text>
+                    </View>
                 )}
 
              <Text>Localização:</Text>
@@ -219,14 +232,18 @@ export default function Fiscalizacao({ navigation, route }) {
 const styles = StyleSheet.create({
     container: {
         padding: 20,
+        backgroundColor: '#F4F6F6',
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#aaa',
-        padding: 10,
-        marginVertical: 8,
-        borderRadius: 4,
         backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 12,
+        marginVertical: 8,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1},
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
     },
     map: {
         height: 200,
@@ -234,28 +251,62 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         borderRadius: 10,
     },
-    picker: {
-        height: 60,
-        marginVertical: 8,
-        borderWidth: 1,
-        borderColor: '#aaa',
-        borderRadius: 4,
-        backgroundColor: '#fff',
-    },
     foto: {
         width: '100%',
         height: 250,
-        marginBottom: 10,
-        marginTop: 10,
-        borderRadius: 4,
+        marginTop: 20,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#CCC'
+    },
+    fotoPlaceholder:{
+        height: 259,
+        backgroundColor: '#eee',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 8,
+        marginTop: 20,
+    },
+    placeholderText: {
+        color: '#aaa',
+        fontStyle: 'normal',
     },
     buttonGroup: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginVertical: 15,
+        justifyContent: 'space-between',
+        marginTop: 16,
+        marginBottom: 8,
+    },
+    fotoButton: {
+        flex: 1,
+        marginHorizontal: 5,
+        borderColor: '#A34003',
+        borderWidth: 1,
+    },
+    card:{
+        marginBottom: 30,
+        backgroundColor: 'transparent',
+    },
+    
+    picker: {
+        fontSize: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: '#aaa',
+        borderRadius: 4,
+        backgroundColor: 'white',
+        color: 'black',
+        paddingRight: 30,
+        marginVertical: 8
     },
     localizacao: {
         marginVertical: 8,
         color: '#555',
     },
+    btn:{
+      backgroundColor: '#008000',
+      marginInlineStart: 'auto',
+      marginBottom: 10,
+    }
 });

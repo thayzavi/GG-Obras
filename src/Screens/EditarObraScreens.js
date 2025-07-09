@@ -144,24 +144,6 @@ export default function EditarObra({ navigation, route }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
 
-      <View style={styles.buttonGroup}>
-          <Button
-              mode="contained"
-              icon="camera"
-              onPress={tirarFoto}
-              style={styles.btn}>
-              Tirar Foto
-          </Button>
-        
-        <Button
-            mode="contained"
-            icon="image"
-            onPress={selecionarFoto}
-            style={styles.btn}>
-              Galeria
-        </Button>
-      </View>
-
       <Text>Nome da obra</Text>
       <TextInput style={styles.input} value={nome} onChangeText={setNome} />
 
@@ -175,6 +157,24 @@ export default function EditarObra({ navigation, route }) {
       <TextInput style={styles.input} value={dataFim} onChangeText={setDataFim} placeholder="DD/MM/AAAA" />
 
       <Text>Foto da obra:</Text>
+      <View style={styles.buttonGroup}>
+          <Button
+              mode="contained"
+              icon="camera"
+              onPress={tirarFoto}
+              style={styles.fotoButton}>
+              Tirar Foto
+          </Button>
+        
+        <Button
+            mode="contained"
+            icon="image"
+            onPress={selecionarFoto}
+            style={styles.fotoButton}>
+              Galeria
+        </Button>
+      </View>
+
           {foto && (
           <Card style={styles.card}>
             <Card.Cover source={{ uri: foto }} style={styles.foto} />
@@ -239,14 +239,18 @@ export default function EditarObra({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    backgroundColor: '#F4F6F6',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#aaa',
-    padding: 8,
-    borderColor: '#d0d0d0',
-    marginVertical: 8,
-    borderRadius: 4,
+  backgroundColor: '#fff',
+  borderRadius: 8,
+  padding: 12,
+  marginVertical: 8,
+  elevation: 3,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1},
+  shadowOpacity: 0.1,
+  shadowRadius: 2,
   },
   map: {
   height: 200,
@@ -255,11 +259,12 @@ const styles = StyleSheet.create({
   borderRadius: 10,
 },
   foto: {
-    width: 360,
-    height: 250,
-    marginTop: 10,
-    alignSelf: 'center',
-    borderRadius: 6,
+  width: '100%',
+  height: 250,
+  marginTop: 20,
+  borderRadius: 10,
+  borderWidth: 1,
+  borderColor: '#ccc',
   },
   card:{
     marginBottom: 30,
@@ -267,10 +272,19 @@ const styles = StyleSheet.create({
   },
   buttonGroup: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 15,
+    justifyContent: 'space-between',
+    marginTop: 16,
+    marginBottom: 8,
   },
   btn:{
     marginBottom: 65,
-  }
+    backgroundColor: '#008000',
+    marginInlineStart: 'auto'
+  },
+  fotoButton: {
+    flex: 1,
+    marginHorizontal: 5,
+    backgroundColor: '#A34003',
+    borderWidth: 1,
+  },
 });

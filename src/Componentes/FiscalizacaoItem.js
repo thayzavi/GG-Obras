@@ -31,8 +31,10 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     image: {
-        width: '20%',
-        height: '100%',
+       width: '25%',
+        height:'85%',
+        marginLeft: 10,
+        marginTop:10,
     },
     info: {
         flex: 1,

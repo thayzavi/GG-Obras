@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, ScrollView, StyleSheet, Alert, Image ,TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert, Image ,TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { Button, Card } from 'react-native-paper';
+import MapView, { Marker } from 'react-native-maps';
 import { api } from '../Services/api';
 import FiscalizacaoItem from '../Componentes/FiscalizacaoItem';
 
@@ -65,113 +66,145 @@ export default function ObraDetailScreen({ route, navigation }) {
   if (!obra) return <Text>Carregando...</Text>;
 
   return (
-    <ScrollView style={styles.container}>
-      
-       <View>
-         <Button
-          icon="pencil"
-          mode="contained"
-          onPress={() => navigation.navigate('EditarObra', {obraId})} style={styles.Button}>
-          Editar Obra
-        </Button>
-       </View>
-
-    {obra.foto && (
-      <Card style={styles.card}>
-        <Card.Cover source={{ uri: obra.foto }} />
-    </Card>
-    )}
-      
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text style={styles.title}>{obra.nome}</Text>
-          <Text> 👷 Responsável: {obra.responsavel}</Text>
-          <Text> 📅 Início: {new Date(obra.dataInicio).toLocaleDateString()}</Text>
-          <Text> ⏳ Fim: { obra.dataFim ? new Date(obra.dataFim).toLocaleDateString() : 'Não definido'}</Text>
-          <Text> 📝 Descrição: {obra.descricao || 'Sem descrição'}</Text>
-          <Text> 📍 Endereço: {obra.endereco || 'Endereço não disponível'}</Text>
-        </Card.Content>
-      </Card>
-
-    <View>
-       <Button 
-        mode="contained"
-        icon="plus"
-        onPress={() => navigation.navigate('Fiscalizacao', { obraId})} style={styles.Button}>
-        Nova Fiscalização
-        </Button>
-    </View>
-
-    <Text style={styles.subTitle}>Fiscalizações</Text>
-    <Card style={styles.card}>
-      <Card.Content>  
+  <KeyboardAvoidingView
+    style={{ flex: 1}}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 50 }}>
+        
         <View>
-          {fiscalizacoes.length === 0 ? (
-            <Text style={{ marginTop: 15 }}>Nenhuma fiscalização cadastrada.</Text>
-          ) : (
-            fiscalizacoes.map(item => (
-              <TouchableOpacity
-                key={item._id}
-                onPress={() => navigation.navigate('DetalhesFiscalizacao', { fiscalizacao: item })}
-              >
-                <FiscalizacaoItem fiscalizacao={item} />
-                 <Text style={styles.detalhesText}>Ver detalhes</Text>
-              </TouchableOpacity>
-            ))
-          )}
-        </View>
-      </Card.Content>
-  </Card>
-
-    <View style={{ marginVertical: 20 }}>
-        <Text>Enviar dados da obra por email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite o email"
-          value={emailDestino}
-          onChangeText={setEmailDestino}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <Button title="Enviar Email" 
-        onPress={enviarEmail} 
-        mode="contained"
-        icon="send"/>
-      </View>
-
-      <View style={styles.buttonGroup}>
-          
           <Button
-          icon="delete"
+            icon="pencil"
+            mode="contained"
+            onPress={() => navigation.navigate('EditarObra', {obraId})} style={styles.Button}>
+            Editar Obra
+          </Button>
+        </View>
+
+      {obra.foto && (
+        <Card style={styles.card}>
+          <Card.Cover source={{ uri: obra.foto }} />
+      </Card>
+      )}
+        
+        <Card style={styles.card}>
+          <Card.Content>
+            <Text style={styles.title}>{obra.nome}</Text>
+            <Text> 👷 Responsável: {obra.responsavel}</Text>
+            <Text> 📅 Início: {new Date(obra.dataInicio).toLocaleDateString()}</Text>
+            <Text> ⏳ Fim: { obra.dataFim ? new Date(obra.dataFim).toLocaleDateString() : 'Não definido'}</Text>
+            <Text> 📝 Descrição: {obra.descricao || 'Sem descrição'}</Text>
+            <Text> 📍 Endereço: {obra.endereco || 'Endereço não disponível'}</Text>
+
+            {obra.localizacao && (
+              <MapView
+                  style={styles.map}
+                  initialRegion={{
+                      latitude: obra.localizacao.lat,
+                      longitude: obra.localizacao.lng,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                  }}
+                  >
+                  <Marker
+                      coordinate={{
+                      latitude: obra.localizacao.lat,
+                      longitude: obra.localizacao.lng,
+                      }}
+                      title="Local Fiscalização"
+                  />
+              </MapView>
+              )} 
+          </Card.Content>
+        </Card>
+
+      <View>
+        <Button 
           mode="contained"
-          onPress={() => (
-            Alert.alert(
-              'Confirma exclusão',
-            'Tem certeza que deseja excluir esta obra?',
-          [
-            {
-              text: 'Cancelar',
-              style: 'cancel'
-            },
-            {
-              text: 'Excluir',
-              onPress: excluirObra,
-              style: 'destructive'
-            }
-          ])
-          )}
-          buttonColor="red"
-          style={styles.btn}>
-            Excluir Obra
+          icon="plus"
+          onPress={() => navigation.navigate('Fiscalizacao', { obraId})} style={styles.Button}>
+          Nova Fiscalização
           </Button>
       </View>
 
-    </ScrollView>
+      <Text style={styles.subTitle}>Fiscalizações</Text>
+      <Card style={styles.card}>
+        <Card.Content>  
+          <View>
+            {fiscalizacoes.length === 0 ? (
+              <Text style={{ marginTop: 15 }}>Nenhuma fiscalização cadastrada.</Text>
+            ) : (
+              fiscalizacoes.map(item => (
+                <TouchableOpacity
+                  key={item._id}
+                  onPress={() => navigation.navigate('DetalhesFiscalizacao', { fiscalizacao: item })}
+                >
+                  <FiscalizacaoItem fiscalizacao={item} />
+                </TouchableOpacity>
+              ))
+            )}
+          </View>
+        </Card.Content>
+    </Card>
+
+      <View style={{ marginVertical: 20 }}>
+          <Text style={styles.title}>Enviar E-mail </Text>
+          <Text>Enviar dados da obra por email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite o email"
+            value={emailDestino}
+            onChangeText={setEmailDestino}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <Button title="Enviar Email" 
+          onPress={enviarEmail} 
+          mode="contained"
+          icon="send"
+          style={styles.ButtonEmail}>
+            Enviar
+          </Button>
+        </View>
+
+        <View style={styles.buttonGroup}>
+            
+            <Button
+            icon="delete"
+            mode="contained"
+            onPress={() => (
+              Alert.alert(
+                'Confirma exclusão',
+              'Tem certeza que deseja excluir esta obra?',
+            [
+              {
+                text: 'Cancelar',
+                style: 'cancel'
+              },
+              {
+                text: 'Excluir',
+                onPress: excluirObra,
+                style: 'destructive'
+              }
+            ])
+            )}
+            buttonColor="red"
+            style={styles.btn}>
+              Excluir Obra
+            </Button>
+        </View>
+      </ScrollView>
+    </TouchableWithoutFeedback>
+  </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 15 },
+  container: { 
+    padding: 15,
+    backgroundColor: '#F4F6F6',
+   },
   title: { 
     fontSize: 22,
     fontWeight: 'bold',  
@@ -190,6 +223,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 4,
   },
+  map:{
+    width: '100%',
+    height: 200,
+    marginVertical: 10,
+    borderRadius: 10,
+  },
   foto: { 
     width: '100%',
     height: 200,
@@ -200,24 +239,25 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     borderRadius: 10,
     elevation: 2,
+    backgroundColor:'#fff',
   },
   Button:{
     flex: 1,
     marginHorizontal: 5,
     marginBottom: 14,
     width:'50%',
-    marginLeft: '50%'
-  },
-  detalhesText:{
-    marginLeft: '70%',
-    marginBottom: 5,
-    fontWeight: '500',
+    marginLeft: '50%',
+    backgroundColor: '#A34003',
   },
   btn:{
     flex: 1,
     marginHorizontal: 5,
     marginBottom: 14,
-    width:'40%',
-    marginLeft: '60%'
-  }
+    width:'35%'
+  },
+  ButtonEmail: {
+    marginBottom: 20,
+    backgroundColor: '#008000',
+    marginInlineStart: 'auto',
+  },
 });
