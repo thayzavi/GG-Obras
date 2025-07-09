@@ -42,6 +42,10 @@ npx expo start
 - Tela **Nova Fiscalização**
 - Tela **Editar obra e fiscalização**
 
+  ## 🤖 5. Assistente Inteligente (ChatBot) - LLM
+  - Chat com interface simples
+  - Retorna a respostas referentes a obras e fiscalizações 
+
 ## 📧 Envio por E-mail
 O usuário insere um e-mail e envia as informações completas da obra e suas fiscalizações. O backend usa Nodemailer para isso.
 
