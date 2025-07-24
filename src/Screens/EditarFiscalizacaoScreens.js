@@ -280,6 +280,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     color: 'black',
     marginVertical: 8,
+    justifyContent: 'center',
+    position: 'relative',
+    zIndex: 1000,
   },
   btn:{
     marginBottom: 65,

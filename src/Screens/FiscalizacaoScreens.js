@@ -135,18 +135,20 @@ export default function Fiscalizacao({ navigation, route }) {
                 placeholder="DD/MM/AAAA"
             />
 
-            <Text>Status</Text>
-            <RNPickerSelect
-                onValueChange={(value) => setStatus(value)}
-                value={status}
-                placeholder={{ label: 'Selecione um status', value: '' }}
-                items={statusList}
-                style={{
-                    inputIOS: styles.picker,
-                    inputAndroid: styles.picker
-                }}
-            />
-            
+            <View style={{ zIndex: 1000 }} >
+                <Text>Status</Text>
+                <RNPickerSelect
+                    onValueChange={(value) => setStatus(value)}
+                    value={status}
+                    placeholder={{ label: 'Selecione um status', value: '' }}
+                    items={statusList}
+                    style={{
+                        inputIOS: styles.picker,
+                        inputAndroid: styles.picker
+                    }}
+                    useNativeAndroidPickerStyle={false}
+                />
+            </View>
             <Text>Observações</Text>
             <TextInput 
                 style={[styles.input, { height: 100 }]} 
@@ -289,16 +291,17 @@ const styles = StyleSheet.create({
     },
     
     picker: {
-        fontSize: 16,
-        paddingVertical: 12,
+        height: 50,
         paddingHorizontal: 10,
         borderWidth: 1,
-        borderColor: '#aaa',
-        borderRadius: 4,
-        backgroundColor: 'white',
-        color: 'black',
-        paddingRight: 30,
-        marginVertical: 8
+        borderColor: '#ccc',
+        borderRadius: 5,
+        color: '#000',
+        backgroundColor: '#fff',
+        marginVertical: 10,
+        justifyContent: 'center',
+        position: 'relative',
+        zIndex: 1000,
     },
     localizacao: {
         marginVertical: 8,
