@@ -78,29 +78,30 @@ export default function EditarFiscalizacao({ navigation , route}) {
 };
 
 const tirarFoto = async () => {
-  try {
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
 
-    if (!result.canceled && result.assets && result.assets[0].uri) {
-      const manipResult = await ImageManipulator.manipulateAsync(
-        result.assets[0].uri,
-        [],
-        {
-          compress: 1,
-          format: ImageManipulator.SaveFormat.JPEG,
-          base64: true,
-        }
-      );
-      setFoto(`data:image/jpeg;base64,${manipResult.base64}`);
+    if (status !== 'granted') {
+        Alert.alert('Permissão negada', 'Permissão para acessar a câmera é necessária!');
+        return;
     }
-  } catch (error) {
-    Alert.alert('Erro', 'Não foi possível tirar a foto');
-  }
+
+    try {
+        const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        base64: true,
+        });
+
+        if (!result.canceled && result.assets?.[0]?.base64) {
+        setFoto('data:image/jpg;base64,' + result.assets[0].base64);
+        }
+    } catch (error) {
+        console.error(error);
+        Alert.alert('Erro', 'Não foi possível tirar a foto');
+    }
 };
+
 
   const salvarAlteracoes = async () => {
     if (!status || !data || !localizacao){

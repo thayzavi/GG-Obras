@@ -79,29 +79,30 @@ const selecionarFoto = async () => {
 };
 
 const tirarFoto = async () => {
-   try {
-     const result = await ImagePicker.launchCameraAsync({
-       allowsEditing: true,
-       aspect: [4, 3],
-       quality: 1,
-     });
- 
-     if (!result.canceled && result.assets && result.assets[0].uri) {
-       const manipResult = await ImageManipulator.manipulateAsync(
-         result.assets[0].uri,
-         [],
-         {
-           compress: 1,
-           format: ImageManipulator.SaveFormat.JPEG,
-           base64: true,
-         }
-       );
-       setFoto(`data:image/jpeg;base64,${manipResult.base64}`);
-     }
-   } catch (error) {
-     Alert.alert('Erro', 'Não foi possível tirar a foto');
-   }
- };
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (status !== 'granted') {
+        Alert.alert('Permissão negada', 'Permissão para acessar a câmera é necessária!');
+        return;
+    }
+
+    try {
+        const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        base64: true,
+        });
+
+        if (!result.canceled && result.assets?.[0]?.base64) {
+        setFoto('data:image/jpg;base64,' + result.assets[0].base64);
+        }
+    } catch (error) {
+        console.error(error);
+        Alert.alert('Erro', 'Não foi possível tirar a foto');
+    }
+};
+
 
     const salvarObra = async () => {//subimit de slvação da obra 
         if (!nome || !responsavel || !dataInicio || !localizacao) {
